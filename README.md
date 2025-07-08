@@ -44,7 +44,7 @@ Proyek ini membangun **Data Warehouse** dari dataset **Instacart** menggunakan *
 
 ## 📊 Star Schema
 
-![Star Schema](images/image1.png)
+![Star Schema](image/image1.png)
 
 Fakta utama:
 - `fact_order_items` (1 baris per produk dalam 1 order)
