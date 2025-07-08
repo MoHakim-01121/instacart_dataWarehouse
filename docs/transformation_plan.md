@@ -1,12 +1,14 @@
 #  Rencana Transformasi Proyek Instacart Data Warehouse
 
-Dokumen ini menjelaskan rencana transformasi data yang dilakukan dalam proyek Instacart Data Warehouse menggunakan dbt + PostgreSQL.
+Dokumen ini menjelaskan rencana transformasi data yang dilakukan dalam proyek 
+Instacart Data Warehouse menggunakan dbt + PostgreSQL.
 
 ---
 
 ##  Pendekatan ELT
 
-Transformasi dilakukan dengan pendekatan modern ELT (Extract, Load, Transform), memanfaatkan kekuatan SQL & dbt untuk melakukan pembersihan, validasi, dan model analitik.
+Transformasi dilakukan dengan pendekatan modern ELT (Extract, Load, Transform), memanfaatkan kekuatan 
+SQL & dbt untuk melakukan pembersihan, validasi, dan model analitik.
 
 ---
 
