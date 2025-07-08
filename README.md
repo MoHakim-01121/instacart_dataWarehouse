@@ -38,6 +38,7 @@ Proyek ini membangun **Data Warehouse** dari dataset **Instacart** menggunakan *
 - **PostgreSQL**: Data warehouse tempat penyimpanan data
 - **VSCode** / Terminal: Pengembangan lokal
 - **dbt Docs**: Dokumentasi otomatis model SQL
+- **metabase**: untuk visualisasi /BI (contoh)
 
 ---
 
