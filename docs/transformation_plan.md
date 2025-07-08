@@ -9,6 +9,13 @@ Dokumen ini menjelaskan rencana transformasi data yang dilakukan dalam proyek In
 Transformasi dilakukan dengan pendekatan modern ELT (Extract, Load, Transform), memanfaatkan kekuatan SQL & dbt untuk melakukan pembersihan, validasi, dan model analitik.
 
 ---
+##  Eksplorasi & Kualitas Data
+
+Tahapan awal sebelum transformasi:
+
+- Mengecek struktur data mentah dari CSV (jumlah baris, null values, distribusi data)
+- Identifikasi anomali seperti nilai 'missing', data kosong, atau referensi FK yang tidak valid
+- Memastikan tipe data sesuai (misal angka vs string)
 
 ##  Transformasi per Model
 
@@ -72,13 +79,6 @@ Transformasi dilakukan dengan pendekatan modern ELT (Extract, Load, Transform), 
 
 ---
 
-##  Eksplorasi & Kualitas Data
-
-Tahapan awal sebelum transformasi:
-
-- Mengecek struktur data mentah dari CSV (jumlah baris, null values, distribusi data)
-- Identifikasi anomali seperti nilai 'missing', data kosong, atau referensi FK yang tidak valid
-- Memastikan tipe data sesuai (misal angka vs string)
 
 Proses ini dilakukan sebelum masuk ke tahap `stg_*` dengan Python, SQL, atau tools eksplorasi lain.
 
