@@ -4,6 +4,32 @@ Proyek ini membangun **Data Warehouse** dari dataset **Instacart** menggunakan *
 
 ---
 
+## 🧰 Teknologi dan Tools
+
+- **dbt**: Data Build Tool untuk transformasi SQL modular
+- **PostgreSQL**: Data warehouse tempat penyimpanan data
+- **VSCode** / Terminal: Pengembangan lokal
+- **dbt Docs**: Dokumentasi otomatis model SQL
+- **metabase**: untuk visualisasi /BI (contoh)
+
+---
+## 📂 Struktur Proyek
+
+```
+instacart_dataWarehouse/
+├── data/                 # File .csv mentah
+├── models/
+│   ├── staging/          # Model staging (stg_*)
+│   ├── marts/
+│   │   ├── dim/          # Model dimensi
+│   │   └── fact/         # Model fakta
+│   └── schema.yml        # Dokumentasi model
+├── snapshots/            # (Opsional jika dibutuhkan)
+├── dbt_project.yml       # Konfigurasi proyek dbt
+├── README.md             # Dokumentasi ini
+```
+
+---
 ## 🧭 Roadmap Tahapan Proyek
 
 | Tahap | Nama Tahap                      | Tujuan                                                                 |
@@ -29,18 +55,6 @@ Proyek ini membangun **Data Warehouse** dari dataset **Instacart** menggunakan *
 - `orders`: Informasi pesanan (user_id, waktu, urutan)
 - `order_products`: Detail produk per pesanan (gabungan prior + train)
 
----
-
-
-## 🧰 Teknologi dan Tools
-
-- **dbt**: Data Build Tool untuk transformasi SQL modular
-- **PostgreSQL**: Data warehouse tempat penyimpanan data
-- **VSCode** / Terminal: Pengembangan lokal
-- **dbt Docs**: Dokumentasi otomatis model SQL
-- **metabase**: untuk visualisasi /BI (contoh)
-
----
 
 ## 📊 Star Schema
 
