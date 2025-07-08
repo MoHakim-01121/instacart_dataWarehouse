@@ -1,6 +1,6 @@
 # 📦 Instacart Data Warehouse 
 
-Proyek ini membangun **Data Warehouse** dari dataset [**Instacart**]((https://www.kaggle.com/datasets/psparks/instacart-market-basket-analysis)) menggunakan **dbt (Data Build Tool)** dan **PostgreSQL**. Proyek mencakup proses **ETL/ELT** lengkap: mulai dari pemuatan data mentah, pembersihan, transformasi, pembuatan tabel dimensi & fakta (star schema), hingga testing dan dokumentasi otomatis.
+Proyek ini membangun **Data Warehouse** dari dataset [**Instacart**](https://www.kaggle.com/datasets/psparks/instacart-market-basket-analysis) menggunakan **dbt (Data Build Tool)** dan **PostgreSQL**. Proyek mencakup proses **ETL/ELT** lengkap: mulai dari pemuatan data mentah, pembersihan, transformasi, pembuatan tabel dimensi & fakta (star schema), hingga testing dan dokumentasi otomatis.
 
 ---
 
