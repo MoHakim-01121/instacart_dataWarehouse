@@ -3,14 +3,12 @@
 Dokumen ini menjelaskan rencana transformasi data yang dilakukan dalam proyek 
 Instacart Data Warehouse menggunakan dbt + PostgreSQL.
 
----
 
 ##  Pendekatan ELT
 
 Transformasi dilakukan dengan pendekatan modern ELT (Extract, Load, Transform), memanfaatkan kekuatan 
 SQL & dbt untuk melakukan pembersihan, validasi, dan model analitik.
 
----
 
 ##  Eksplorasi & Kualitas Data
 
@@ -39,7 +37,7 @@ Tahapan awal sebelum transformasi:
 | `stg_order_products.sql`| - Validasi FK ke `order_id`, `product_id`                                   |
 |                        | - Cast tipe data, filter NULL                                                |
 
----
+
 
 ### Mart Layer - Dimensi (`models/marts/dim/`)
 
@@ -54,7 +52,7 @@ Tahapan awal sebelum transformasi:
 | `dim_order.sql`   | - Ambil dari `stg_orders`, simpan info seperti `order_number`, `order_hour`, dll      |
 | `dim_time.sql`    | - Turunan dari `order_hour`, `order_day_of_week` untuk mapping `time_id`, `day_name`, `time_hour` |
 
----
+
 
 ### Mart Layer - Fakta (`models/marts/fact/`)
 
@@ -67,7 +65,7 @@ Tahapan awal sebelum transformasi:
 |                        |   - `dim_time` → via `order_hour`, `order_day_of_week`                       |
 |                        | - Simpan fakta granular: `add_to_cart_order`, `reordered`                    |
 
----
+
 
 ##  Jenis Transformasi Berdasarkan Fungsi
 
