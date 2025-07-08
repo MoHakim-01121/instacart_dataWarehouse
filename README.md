@@ -118,7 +118,7 @@ Dimensi:
 
 ## 📊 Contoh Hasil Laporan Analitik
 
-
+![Contoh Penggunaan BI di metabase](image/image2.png)
 
 1. Produk paling sering dibeli ulang
 2. Rata-rata hari antar order per user
