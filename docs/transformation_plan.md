@@ -9,6 +9,7 @@ Dokumen ini menjelaskan rencana transformasi data yang dilakukan dalam proyek In
 Transformasi dilakukan dengan pendekatan modern ELT (Extract, Load, Transform), memanfaatkan kekuatan SQL & dbt untuk melakukan pembersihan, validasi, dan model analitik.
 
 ---
+
 ##  Eksplorasi & Kualitas Data
 
 Tahapan awal sebelum transformasi:
