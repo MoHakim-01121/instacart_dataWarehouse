@@ -1,0 +1,1 @@
+{{ test_accepted_values(column_name="reordered", model=get_where_subquery(ref('fact_order_items')), values=[0,1]) }}

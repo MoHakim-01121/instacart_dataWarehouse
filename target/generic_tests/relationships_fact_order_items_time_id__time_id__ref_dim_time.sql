@@ -1,0 +1,1 @@
+{{ test_relationships(column_name="time_id", field="time_id", model=get_where_subquery(ref('fact_order_items')), to=ref('dim_time')) }}

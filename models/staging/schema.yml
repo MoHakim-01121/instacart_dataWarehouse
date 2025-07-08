@@ -3,172 +3,190 @@ version: 2
 sources:
   - name: instacart
     schema: public
-    description: "Sumber data mentah dari file CSV (seed dan psql)"
+    description: >
+      Sumber data mentah dari dataset Instacart. 
+      Tabel `aisles`, `departments`, dan `products` dimuat via `dbt seed` dari file CSV,
+      sedangkan `orders` dan `order_products` dimuat dengan `psql` karena berukuran besar.
+
     tables:
       - name: aisles
-        description: "Informasi rak barang"
+        description: >
+          Daftar lokasi rak tempat produk disimpan di toko. 
+          Digunakan sebagai referensi dalam dimensi produk.
+        columns:
+          - name: aisle_id
+            description: "Primary key dari rak (aisle)"
+            tests: [not_null, unique]
+          - name: aisle
+            description: "Nama rak tempat penyimpanan produk"
+
       - name: departments
-        description: "Kategori produk"
+        description: >
+          Daftar departemen (kategori besar produk), misalnya dairy, produce, beverages.
+          Digunakan untuk klasifikasi produk tingkat tinggi.
+        columns:
+          - name: department_id
+            description: "Primary key dari departemen"
+            tests: [not_null, unique]
+          - name: department
+            description: "Nama departemen produk"
+
       - name: products
-        description: "Produk lengkap dengan department dan aisle"
+        description: >
+          Daftar produk unik yang dijual. 
+          Berelasi dengan rak (`aisle_id`) dan departemen (`department_id`).
+        columns:
+          - name: product_id
+            description: "Primary key produk"
+            tests: [not_null, unique]
+          - name: product_name
+            description: "Nama produk (bisa berisi spasi atau nilai 'missing')"
+          - name: aisle_id
+            description: "Foreign key ke rak (aisle)"
+          - name: department_id
+            description: "Foreign key ke departemen"
+
       - name: orders
-        description: "Informasi pesanan (dimuat via psql)"
+        description: >
+          Daftar semua order pelanggan. 
+          Mencakup waktu order, urutan order per pelanggan, dan jeda antar order.
+        columns:
+          - name: order_id
+            description: "Primary key order"
+            tests: [not_null, unique]
+          - name: user_id
+            description: "ID user yang melakukan order"
+          - name: order_number
+            description: "Order keberapa oleh user ini"
+          - name: order_dow
+            description: "Hari dalam minggu (0 = Minggu, 6 = Sabtu)"
+          - name: order_hour_of_day
+            description: "Jam saat order dilakukan (0–23)"
+          - name: days_since_prior_order
+            description: "Jeda hari sejak order sebelumnya (NULL jika order pertama)"
+
       - name: order_products
-        description: "Detail produk per order (gabungan prior+train via psql)"
-
-
+        description: >
+          Detail isi setiap order, termasuk produk yang dibeli, urutan produk dalam keranjang, dan apakah di-reorder.
+        columns:
+          - name: order_id
+            description: "Foreign key ke orders"
+          - name: product_id
+            description: "Foreign key ke products"
+          - name: add_to_cart_order
+            description: "Urutan produk dimasukkan ke keranjang"
+          - name: reordered
+            description: "Apakah produk ini dipesan ulang (1 = ya, 0 = tidak)"
 
 models:
 
   - name: stg_aisles
-    description: "Staging model untuk tabel aisles (rak tempat produk)"
+    description: >
+      Staging model untuk tabel aisles. 
+      Membersihkan whitespace dan menstandarisasi nilai 'missing' menjadi 'Unknown'.
     columns:
       - name: aisle_id
-        description: "ID unik untuk setiap aisle (rak barang)"
-        tests: 
-          - not_null
-          - unique
-
+        description: "Primary key rak"
+        tests: [not_null, unique]
       - name: aisle_name
         description: >
-          Nama aisle yang sudah dibersihkan. 
-          Nilai 'missing' telah diubah menjadi 'Unknown' di transformasi.
+          Nama rak yang telah dibersihkan.
+          Nilai 'missing' diganti menjadi 'Unknown' untuk konsistensi.
         tests:
           - not_null
-          # Test ini bisa diaktifkan jika ingin memastikan tidak ada nilai 'Unknown':
-          # - dbt_utils.not_accepted_values:
-          #     values: ['Unknown']
 
   - name: stg_departments
-    description: "Staging model untuk tabel departments (kategori produk)"
+    description: >
+      Staging model untuk tabel departments. 
+      Melakukan pembersihan nama dan standarisasi nilai.
     columns:
       - name: department_id
-        description: "ID unik untuk setiap department"
-        tests:
-          - not_null
-          - unique
-
+        description: "Primary key department"
+        tests: [not_null, unique]
       - name: department_name
         description: >
-          Nama departemen yang sudah dibersihkan.
-          Nilai 'missing' telah diubah menjadi 'Unknown' di transformasi.
+          Nama departemen yang telah dibersihkan dari whitespace dan nilai 'missing'.
         tests:
           - not_null
-          # Test tambahan jika ingin pastikan 'Unknown' tidak muncul:
-          # - dbt_utils.not_accepted_values:
-          #     values: ['Unknown']
-
 
   - name: stg_products
     description: >
-      Staging model untuk produk. Membersihkan nama produk dari spasi, 
-      mengganti nilai 'missing' dengan 'Unknown', dan validasi foreign key.
-
+      Staging model untuk produk. 
+      Membersihkan nama produk, validasi foreign key ke aisle dan department.
     columns:
       - name: product_id
-        description: "ID unik untuk setiap produk"
-        tests:
-          - not_null
-          - unique
-
+        description: "Primary key produk"
+        tests: [not_null, unique]
       - name: product_name
         description: >
-          Nama produk yang telah dibersihkan.
-          Jika sebelumnya 'missing', akan diganti menjadi 'Unknown'.
-        tests:
-          - not_null
-          # - dbt_utils.not_accepted_values:
-          #     values: ['Unknown']
-
+          Nama produk bersih (trimmed).
+          Jika 'missing', diganti dengan 'Unknown'.
+        tests: [not_null]
       - name: aisle_id
-        description: "Foreign key ke stg_aisles"
+        description: "Foreign key ke rak (stg_aisles)"
         tests:
           - not_null
           - relationships:
               to: ref('stg_aisles')
               field: aisle_id
-
       - name: department_id
-        description: "Foreign key ke stg_departments"
+        description: "Foreign key ke kategori (stg_departments)"
         tests:
           - not_null
           - relationships:
               to: ref('stg_departments')
               field: department_id
 
-    
-
   - name: stg_orders
     description: >
-      Staging model untuk tabel orders.
-      Menyelaraskan penamaan kolom agar lebih deskriptif dan mempertahankan nilai NULL pada `days_since_prior_order`.
-
+      Staging model untuk data order.
+      Melakukan penyesuaian nama kolom dan konversi tipe data agar konsisten dan deskriptif.
     columns:
       - name: order_id
-        description: "ID unik untuk setiap order"
-        tests:
-          - not_null
-          - unique
-
+        description: "Primary key order"
+        tests: [not_null, unique]
       - name: user_id
-        description: "ID pengguna yang melakukan order"
-        tests:
-          - not_null
-
+        description: "ID user yang melakukan order"
+        tests: [not_null]
       - name: order_number
-        description: "Urutan keberapa user melakukan order"
-        tests:
-          - not_null
-
+        description: "Nomor urut order per user"
+        tests: [not_null]
       - name: order_day_of_week
-        description: "Hari pemesanan (0 = Minggu, 6 = Sabtu)"
-        tests:
-          - not_null
-
+        description: "Hari dalam minggu (0 = Minggu)"
+        tests: [not_null]
       - name: order_hour
-        description: "Jam pemesanan (0-23)"
-        tests:
-          - not_null
-
+        description: "Jam saat order dilakukan"
+        tests: [not_null]
       - name: days_since_prior_order
         description: >
-          Selisih hari sejak order sebelumnya.
-          NULL berarti ini adalah order pertama dari user tersebut.
-
+          Jeda hari dari order sebelumnya.
+          Bisa NULL jika ini adalah order pertama.
 
   - name: stg_order_products
     description: >
-      Staging model untuk tabel order_products.
-      Berisi informasi produk yang dipesan per order, termasuk urutan dan apakah produk tersebut dipesan ulang.
-
+      Staging model untuk detail produk dalam order.
+      Membersihkan dan meng-cast data, serta validasi foreign key.
     columns:
       - name: order_id
-        description: "ID order, merujuk ke stg_orders"
+        description: "Foreign key ke order"
         tests:
           - not_null
           - relationships:
               to: ref('stg_orders')
               field: order_id
-
       - name: product_id
-        description: "ID produk, merujuk ke stg_products"
+        description: "Foreign key ke produk"
         tests:
           - not_null
           - relationships:
               to: ref('stg_products')
               field: product_id
-
       - name: add_to_cart_order
-        description: "Urutan produk dimasukkan ke keranjang dalam satu order"
-        tests:
-          - not_null
-
+        description: "Urutan produk dimasukkan ke keranjang"
+        tests: [not_null]
       - name: reordered
-        description: >
-          Apakah produk ini dipesan ulang (1) atau tidak (0).
-          1 = user sudah pernah memesan produk ini sebelumnya.
+        description: "1 jika produk ini dipesan ulang, 0 jika baru pertama kali"
         tests:
           - not_null
           - accepted_values:
               values: [0, 1]
-

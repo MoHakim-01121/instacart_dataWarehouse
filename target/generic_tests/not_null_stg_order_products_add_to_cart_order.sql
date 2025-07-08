@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="add_to_cart_order", model=get_where_subquery(ref('stg_order_products'))) }}
