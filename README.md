@@ -116,7 +116,7 @@ Dimensi:
 
 ---
 
-## 📊 Contoh Hasil Laporan Analitik
+## 📊 Contoh Hasil Laporan Analitik (metabase)
 
 ![Contoh Penggunaan BI di metabase](image/image2.png)
 
