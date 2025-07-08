@@ -1,0 +1,132 @@
+# models/marts/dim/schema.yml
+
+version: 2
+
+models:
+  - name: dim_aisle
+    description: "Dimensi rak tempat produk"
+    columns:
+      - name: aisle_id
+        description: "ID unik untuk setiap rak (aisle)"
+        tests:
+          - not_null
+          - unique
+      - name: aisle_name
+        description: "Nama rak"
+  
+  - name: dim_department
+    description: 'Dimensi kategori produk'
+    columns:
+      - name: department_id
+        description: 'ID unik untuk setiap department (kategori)'
+        tests: 
+          - not_null
+          - unique
+      - name: department_name
+        description: 'Nama Kategori'
+
+
+  - name : dim_product
+    description: "Dimensi produk lengkap dengan referensi aisle dan department"
+    columns: 
+      - name: product_id
+        description: 'ID unik untuk setiap produk'
+        tests:
+          - not_null
+          - unique
+      - name: product_name 
+        description: 'Nama Produk'
+      - name: aisle_id
+        description: 'foreign key ke dim_aisle'
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_aisle')
+              field: aisle_id
+      - name: department_id
+        description: 'foreign key ke dim_department'
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_department')
+              field: department_id
+
+  - name: dim_user
+    description: >
+      Dimensi pengguna yang menyimpan informasi agregasi perilaku belanja dari tabel orders.
+      Berisi total order, order terakhir, dan rata-rata jeda antar order.
+
+    columns:
+      - name: user_id
+        description: "ID unik pengguna (primary key)"
+        tests: [not_null, unique]
+
+      - name: total_orders
+        description: "Jumlah total order yang dilakukan user"
+        tests: [not_null]
+
+      - name: max_order_number
+        description: "Order terakhir (nomor order terbesar) dari user"
+        tests: [not_null]
+
+      - name: avg_days_between_orders
+        description: >
+          Rata-rata selisih hari antar order untuk user. Nilai NULL tidak ikut dihitung dalam rata-rata.
+
+  - name: dim_order
+    description: >
+      Dimensi order yang menyimpan informasi waktu, user, dan urutan order.
+      Berfungsi sebagai referensi untuk fakta order item.
+
+    columns:
+      - name: order_id
+        description: "ID unik untuk setiap order"
+        tests: [not_null, unique]
+
+      - name: user_id
+        description: "ID pengguna yang melakukan order"
+        tests: [not_null]
+
+      - name: order_number
+        description: "Urutan order ke berapa oleh user tersebut"
+        tests: [not_null]
+
+      - name: order_day_of_week
+        description: "Hari order dilakukan (0 = Minggu, 6 = Sabtu)"
+        tests: [not_null]
+
+      - name: order_hour
+        description: "Jam dalam sehari saat order dilakukan (0-23)"
+        tests: [not_null]
+
+      - name: days_since_prior_order
+        description: >
+          Selisih hari dari order sebelumnya (NULL jika ini order pertama)
+
+  - name: dim_time
+    description: >
+      Dimensi waktu berdasarkan kombinasi hari (dow) dan jam (hour) dari data order.
+      Menyediakan informasi nama hari dan waktu terformat, serta time_id sebagai surrogate key.
+
+    columns:
+      - name: time_id
+        description: "Surrogate key unik berdasarkan order_day_of_week dan order_hour"
+        tests:
+          - not_null
+          - unique
+
+      - name: order_day_of_week
+        description: "Angka hari dalam seminggu (0 = Minggu, 6 = Sabtu)"
+        tests:
+          - not_null
+
+      - name: day_name
+        description: "Nama hari berdasarkan angka hari (Senin–Minggu)"
+
+      - name: order_hour
+        description: "Jam saat order dilakukan (0–23)"
+        tests:
+          - not_null
+
+      - name: time_hour
+        description: "Jam order dalam format HH:00, digunakan untuk visualisasi waktu"

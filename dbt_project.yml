@@ -1,0 +1,29 @@
+name: 'instacart_dbt'
+version: '1.0.0'
+
+profile: 'instacart_dbt'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["data"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  instacart_dbt:
+    staging:
+      materialized: view
+    marts:
+      dim:
+        materialized: table
+      fact:
+        materialized: table
+
+seeds:
+  instacart_dbt:
+    +delimiter: ","
