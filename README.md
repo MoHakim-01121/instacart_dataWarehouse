@@ -1,18 +1,19 @@
-# 📦 Instacart Data Warehouse with dbt & PostgreSQL
+# 📦 Instacart Data Warehouse 
 
 Proyek ini membangun **Data Warehouse** dari dataset **Instacart** menggunakan **dbt (Data Build Tool)** dan **PostgreSQL**. Proyek mencakup proses **ETL/ELT** lengkap: mulai dari pemuatan data mentah, pembersihan, transformasi, pembuatan tabel dimensi & fakta (star schema), hingga testing dan dokumentasi otomatis.
 
 ---
 
-## 🧰 Teknologi dan Tools
+## 🧱 Teknologi & Tools
 
-- **dbt**: Data Build Tool untuk transformasi SQL modular
-- **PostgreSQL**: Data warehouse tempat penyimpanan data
-- **VSCode** / Terminal: Pengembangan lokal
-- **dbt Docs**: Dokumentasi otomatis model SQL
-- **metabase**: untuk visualisasi /BI (contoh)
+- **dbt (data build tool)** untuk transformasi data
+- **PostgreSQL** sebagai data warehouse
+- **Metabase** untuk visualisasi
+- **GitHub** untuk version control & kolaborasi
+- **dbdiagram.io** untuk ERD
 
 ---
+
 ## 📂 Struktur Proyek
 
 ```
@@ -30,6 +31,20 @@ instacart_dataWarehouse/
 ```
 
 ---
+
+## 📈 Tujuan Proyek
+
+Membangun sistem data warehouse yang:
+- Menyediakan **struktur data analitik** yang bersih, tervalidasi, dan mudah digunakan
+- Memungkinkan pembuatan laporan seperti:
+  - Penjualan per produk & kategori
+  - Pola belanja pelanggan
+  - Waktu populer untuk belanja
+  - Produk paling sering dibeli ulang
+
+---
+
+---
 ## 🧭 Roadmap Tahapan Proyek
 
 | Tahap | Nama Tahap                      | Tujuan                                                                 |
@@ -40,21 +55,51 @@ instacart_dataWarehouse/
 | 4     | **Intermediate Layer** (Opsional) | Transformasi tambahan sebelum masuk ke mart                         |
 | 5     | **Dimensi dan Fakta (Mart)**    | Membangun tabel **dimensi dan fakta** (berbasis star schema)          |
 | 6     | **Testing & Dokumentasi**       | Menambahkan test di `schema.yml` dan dokumentasi dengan `dbt docs`    |
-| 7     | **Deployment & Automasi** (Opsional) | Deploy lokal, atau automasi via scheduler/dbt Cloud               |
-
+| 7     | **Deployment & Automasi** (Opsional) | Deploy lokal, atau automasi via scheduler/db
 ---
 
-## 📦 Dataset
+## 🧭 Tahapan Proyek
 
-[Dataset](https://www.kaggle.com/datasets/psparks/instacart-market-basket-analysis) berasal dari kompetisi Instacart Market Basket Analysis. Tabel-tabel mentah dimuat melalui `dbt seed` dan `psql`.
+### Tahap 1: Analisis & Perancangan
+- Memahami struktur data mentah Instacart
+- Mengidentifikasi kebutuhan pelaporan (penjualan produk, kategori, perilaku pelanggan)
+- Merancang **star schema** dan High Level diagram
+- Menyusun rencana transformasi
 
-### Tabel Mentah:
-- `aisles`: Data rak tempat produk berada
-- `departments`: Kategori produk tingkat atas
-- `products`: Produk individual
-- `orders`: Informasi pesanan (user_id, waktu, urutan)
-- `order_products`: Detail produk per pesanan (gabungan prior + train)
+### Tahap 2: Load Data Mentah
+- `dbt seed` untuk file kecil (aisles, departments, products)
+- `psql` untuk file besar (order_products.csv, orders)
 
+### Tahap 3: Staging Layer (stg_*)
+- Membersihkan dan menstandarkan data
+  - Rename kolom, trim/lowercase, casting
+  - Handling data duplicate
+  - Handling 'missing' dan NULL
+  - Validasi kualitas data dan validasi foreign key
+
+
+### 4. Mart Layer – Dimensi
+- `dim_user`: Agregasi total orders, rata-rata jeda order
+- `dim_product`: Join dengan aisle & department
+- `dim_order`: Detail order (
+- `dim_time`: Mapping jam dan hari (snowflake dari order)
+- `dim_aisle` dan `dim_department` dimensi dari product
+
+
+### 5. Mart Layer – Fakta
+- `fact_order_items`: satu baris per produk dalam satu order
+- Join ke semua dimensi : user, product, order, time
+
+### 6. Testing & Dokumentasi
+- Test: not_null, unique, relationships, accepted_values
+- Dokumentasi `schema.yml` dan `README.md`
+- Diagram star schema dll
+
+### 7. Deployment (opsional)
+- Upload ke GitHub
+- Siap integrasi ke Metabase atau dbt Cloud
+
+---
 
 ## 📊 Star Schema
 
@@ -69,30 +114,37 @@ Dimensi:
 - `dim_order`
 - `dim_time`
 
-## 🛠️ Proses ELT
+---
 
-1. Load file CSV ke PostgreSQL (via `dbt seed` dan `psql`)
-2. Bersihkan dan validasi di **layer staging**
-3. Bangun dimensi dan fakta di **mart layer**
-4. Tambahkan **test otomatis** dan **dokumentasi**
-5. Generate dokumentasi dengan `dbt docs generate`
+## 📊 Contoh Hasil Laporan Analitik
 
-## 📌 Tujuan Analisis
 
-- Mengetahui produk dan kategori paling laris
-- Menganalisis perilaku pelanggan (reorder, frekuensi belanja)
-- Distribusi waktu pembelian (jam dan hari)
-- Rekomendasi produk dan loyalitas
+
+1. Produk paling sering dibeli ulang
+2. Rata-rata hari antar order per user
+3. Penjualan per kategori (department/aisle)
+4. Distribusi waktu pembelian
+
+---
 
 ## 🚀 Cara Menjalankan
 
 ```bash
-# Jalankan di environment dbt
-dbt seed
-dbt run
-dbt test
-dbt docs generate && dbt docs serve
+conda activate dbtetl
 
+# Jalankan transformasi
+dbt build
 
+# Generate dokumentasi
+dbt docs generate
+dbt docs serve
+```
 
+---
 
+## 📚 Referensi
+
+- [Instacart Kaggle Dataset](https://www.kaggle.com/competitions/instacart-market-basket-analysis/data)
+- [dbt Documentation](https://docs.getdbt.com/)
+- [PostgreSQL Docs](https://www.postgresql.org/docs/)
+- [dbdiagram.io](https://dbdiagram.io)
