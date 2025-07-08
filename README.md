@@ -144,7 +144,7 @@ dbt docs serve
 
 ## 📚 Referensi
 
-- [Instacart Kaggle Dataset](https://www.kaggle.com/competitions/instacart-market-basket-analysis/data)
+- [Instacart Kaggle Dataset](https://www.kaggle.com/datasets/psparks/instacart-market-basket-analysis)
 - [dbt Documentation](https://docs.getdbt.com/)
 - [PostgreSQL Docs](https://www.postgresql.org/docs/)
 - [dbdiagram.io](https://dbdiagram.io)
