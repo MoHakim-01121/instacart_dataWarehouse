@@ -20,7 +20,7 @@ Proyek ini membangun **Data Warehouse** dari dataset **Instacart** menggunakan *
 
 ## 📦 Dataset
 
-Dataset berasal dari kompetisi Instacart Market Basket Analysis. Tabel-tabel mentah dimuat melalui `dbt seed` dan `psql`.
+[Dataset](https://www.kaggle.com/datasets/psparks/instacart-market-basket-analysis) berasal dari kompetisi Instacart Market Basket Analysis. Tabel-tabel mentah dimuat melalui `dbt seed` dan `psql`.
 
 ### Tabel Mentah:
 - `aisles`: Data rak tempat produk berada
