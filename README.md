@@ -64,7 +64,7 @@ Membangun sistem data warehouse yang:
 - Memahami struktur data mentah Instacart
 - Mengidentifikasi kebutuhan pelaporan (penjualan produk, kategori, perilaku pelanggan)
 - Merancang **star schema** dan High Level diagram
-- Menyusun rencana transformasi
+- Menyusun [rencana transformasi](docs/transformation_plan.md)
 
 ### Tahap 2: Load Data Mentah
 - `dbt seed` untuk file kecil (aisles, departments, products)
