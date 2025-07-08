@@ -77,11 +77,4 @@ Tahapan awal sebelum transformasi:
 | **Join**           | fact_order_items           | Gabungkan semua dimensi ke tabel fakta    |
 | **Mapping/Metrik** | dim_time                   | Mapping jam & hari jadi dimensi eksplisit |
 
----
 
-
-Proses ini dilakukan sebelum masuk ke tahap `stg_*` dengan Python, SQL, atau tools eksplorasi lain.
-
----
-
-Dokumen ini melengkapi bagian teknis dari dokumentasi proyek dan dapat digunakan untuk audit, review, atau pelatihan tim.
