@@ -18,21 +18,6 @@ Proyek ini membangun **Data Warehouse** dari dataset **Instacart** menggunakan *
 
 ---
 
-## 📁 Struktur Proyek
-instacart_dbt/
-├── models/
-│ ├── staging/ # Pembersihan & standarisasi data mentah
-│ ├── marts/
-│ │ ├── dim/ # Dimensi: user, produk, order, waktu
-│ │ └── fact/ # Fakta: granular order items
-│ └── schema.yml # Dokumentasi source & model
-├── data/ # File CSV untuk seed
-├── snapshots/ # (Opsional) Snapshot data historis
-└── README.md # Dokumentasi proyek ini
-
-
----
-
 ## 📦 Dataset
 
 Dataset berasal dari kompetisi Instacart Market Basket Analysis. Tabel-tabel mentah dimuat melalui `dbt seed` dan `psql`.
