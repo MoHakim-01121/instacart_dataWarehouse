@@ -13,10 +13,10 @@ SQL & dbt untuk melakukan pembersihan, validasi, dan model analitik.
 ##  Eksplorasi & Kualitas Data
 
 Tahapan awal sebelum transformasi:
-
 - Mengecek struktur data mentah dari CSV (jumlah baris, null values, distribusi data)
 - Identifikasi anomali seperti nilai 'missing', data kosong, atau referensi FK yang tidak valid
 - Memastikan tipe data sesuai (misal angka vs string)
+- 
 
 ##  Transformasi per Model
 
@@ -26,13 +26,15 @@ Tahapan awal sebelum transformasi:
 |------------------------|------------------------------------------------------------------------------|
 | `stg_orders.sql`       | - Rename kolom (`order_hour_of_day → order_hour`)                            |
 |                        | - Cast tipe data ke integer                                                  |
-|                        | - NULL handling `days_since_prior_order` (tetap NULL jika order pertama)     |
-| `stg_products.sql`     | - Trim spasi dan lowercase `product_name`                                    |
+|                        | - NULL handling kolom `days_since_prior_order` (tetap NULL jika order pertama)     |
+| `stg_products.sql`     | - Trim spasi, lowercase dan Null handling kolom `product_name`                                   |
 |                        | - Ganti `'missing'` jadi `'Unknown'`                                         |
 |                        | - Validasi FK ke `aisle_id`, `department_id`                                 |
-| `stg_aisles.sql`       | - Trim dan lowercase `aisle_name`                                            |
+| `stg_aisles.sql`       | - Rename dari `aisle` menjadi `aisle_name`                                            |
+|                        | - Trim dan lowercase `aisle_name`                                            |
 |                        | - Ganti `'missing'` jadi `'Unknown'`                                         |
-| `stg_departments.sql`  | - Trim dan lowercase `department_name`                                       |
+| `stg_departments.sql`  | - Rename `department` menjadi `department_name`                                       |
+|                        | - Trim dan lowercase `department_name`                                       |
 |                        | - Ganti `'missing'` jadi `'Unknown'`                                         |
 | `stg_order_products.sql`| - Validasi FK ke `order_id`, `product_id`                                   |
 |                        | - Cast tipe data, filter NULL                                                |
