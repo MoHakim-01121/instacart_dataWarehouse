@@ -20,7 +20,6 @@ Tahapan awal sebelum transformasi:
 
 ![High level diagram](image/image3.png)
 
-
 ##  Transformasi per Model
 
 ### Staging Layer (`models/staging/`)
