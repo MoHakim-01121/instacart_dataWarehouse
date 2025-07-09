@@ -13,10 +13,10 @@ SQL & dbt untuk melakukan pembersihan, validasi, dan model analitik.
 ##  Eksplorasi & Kualitas Data
 
 Tahapan awal sebelum transformasi:
-- Mengecek struktur data mentah dari CSV (jumlah baris, null values, distribusi data)
+- Memahami dataset dan mengeksplor dataset
+- Mengecek struktur dan kualitas data mentah dari CSV (jumlah baris, null values, distribusi data)
 - Identifikasi anomali seperti nilai 'missing', data kosong, atau referensi FK yang tidak valid
 - Memastikan tipe data sesuai (misal angka vs string)
-- 
 
 ##  Transformasi per Model
 
