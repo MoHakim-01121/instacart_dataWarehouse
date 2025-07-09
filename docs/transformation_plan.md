@@ -74,7 +74,7 @@ Tahapan awal sebelum transformasi:
 | Tipe Transformasi  | Contoh Model               | Penjelasan Singkat                        |
 |-------------------|----------------------------|-------------------------------------------|
 | **Standarisasi**   | Semua stg model            | Rename kolom, trim spasi, ubah nilai      |
-| **Cleaning**       | stg_products, stg_orders   | Validasi FK, handling NULL                |
+| **Cleaning**       | stg_products, stg_orders,stg_aisle, stg_department  | Validasi FK, handling NULL                |
 | **Validasi**       | schema.yml (tests)         | `not_null`, `unique`, `relationships`     |
 | **Agregasi**       | dim_user                   | Agregasi metrik dari stg_orders           |
 | **Join**           | fact_order_items           | Gabungkan semua dimensi ke tabel fakta    |
