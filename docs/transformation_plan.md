@@ -18,7 +18,7 @@ Tahapan awal sebelum transformasi:
 - Identifikasi anomali seperti nilai 'missing', data kosong, atau referensi FK yang tidak valid
 - Memastikan tipe data sesuai (misal angka vs string)
 
-![High level diagram](image/image3.png)
+![High level diagram](instacart_dataWarehouse/image/image3.png)
 
 ##  Transformasi per Model
 
