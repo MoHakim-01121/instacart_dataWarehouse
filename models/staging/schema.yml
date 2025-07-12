@@ -88,12 +88,16 @@ models:
       - name: aisle_id
         description: "Primary key rak"
         tests: [not_null, unique]
+
       - name: aisle_name
         description: >
           Nama rak yang telah dibersihkan.
-          Nilai 'missing' diganti menjadi 'Unknown' untuk konsistensi.
+          Nilai 'missing' diganti menjadi 'Unknown'. data lorong/rak yang tidak diketahui bisa karena data tidak lengkap, salah input,.
         tests:
           - not_null
+          # Bisa ditambahkan jika ingin pastikan tidak ada 'Unknown':
+          # - dbt_utils.not_accepted_values:
+          #     values: ['Unknown']
 
   - name: stg_departments
     description: >
@@ -140,27 +144,45 @@ models:
   - name: stg_orders
     description: >
       Staging model untuk data order.
-      Melakukan penyesuaian nama kolom dan konversi tipe data agar konsisten dan deskriptif.
+      Melakukan penyesuaian nama kolom dan mapping hari agar konsisten dan deskriptif
+      untuk kebutuhan transformasi dan analisis downstream.
     columns:
       - name: order_id
-        description: "Primary key order"
+        description: "Primary key untuk setiap order"
         tests: [not_null, unique]
+
       - name: user_id
         description: "ID user yang melakukan order"
         tests: [not_null]
+
       - name: order_number
         description: "Nomor urut order per user"
         tests: [not_null]
-      - name: order_day_of_week
-        description: "Hari dalam minggu (0 = Minggu)"
-        tests: [not_null]
-      - name: order_hour
-        description: "Jam saat order dilakukan"
-        tests: [not_null]
-      - name: days_since_prior_order
+
+      - name: order_day
         description: >
-          Jeda hari dari order sebelumnya.
-          Bisa NULL jika ini adalah order pertama.
+          Hari dalam seminggu saat order dilakukan, 
+          hasil mapping dari angka 0–6 menjadi nama hari (Sunday–Saturday).
+        tests: [not_null]
+
+      - name: order_hour
+        description: "Jam (0–23) saat order dilakukan"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 23
+
+      - name: order_days_gap
+        description: >
+          Jumlah hari sejak order sebelumnya.
+          Bisa bernilai NULL jika ini adalah order pertama dari user.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 30
+              severity: warn
+
 
   - name: stg_order_products
     description: >

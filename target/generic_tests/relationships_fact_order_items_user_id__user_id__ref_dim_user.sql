@@ -1,1 +1,0 @@
-{{ test_relationships(column_name="user_id", field="user_id", model=get_where_subquery(ref('fact_order_items')), to=ref('dim_user')) }}

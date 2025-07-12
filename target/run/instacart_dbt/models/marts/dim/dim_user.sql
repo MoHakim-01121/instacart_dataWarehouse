@@ -8,44 +8,39 @@
     as
   
   (
-    -- models/marts/dim_user.sql
+    -- models/marts/dim/dim_user.sql
 
-  -- Tujuan:
-  -- Model ini membentuk dimensi pengguna berdasarkan data order.
-  -- Setiap baris mewakili satu user, disertai agregasi statistik perilaku belanja:
-  -- 1. total_orders: jumlah pesanan yang pernah dilakukan user
-  -- 2. max_order_number: urutan order terakhir (maksimal)
-  -- 3. avg_days_between_orders: rata-rata selisih hari antar order (tidak termasuk NULL)
+-- Tujuan:
+-- Membangun dimensi pengguna berdasarkan riwayat pemesanan.
+-- Fokus pada total order, rata-rata jeda antar order, dan order terakhir.
 
-  with orders as (
+with base as (
+    select
+        user_id,
+        order_number,
+        days_gap
+    from "instacart_db"."public"."stg_orders"
+),
 
-      -- Mengambil seluruh data dari model staging orders
-      select * 
-      from "instacart_db"."public"."stg_orders"
+agg as (
+    select
+        user_id,
 
-  ),
+        -- Total jumlah order yang dilakukan user
+        count(*) as total_orders,
 
-  aggregated as (
+        -- Rata-rata hari antar order (dibulatkan 0 angka desimal)
+        round(avg(days_gap)::numeric, 0) as avg_days_between_orders,
 
-      -- Melakukan agregasi per user
-      select
-          user_id,
+        -- Nomor order terakhir yang dilakukan user
+        max(order_number) as last_order_number,
 
-          -- Total pesanan (order_id) yang dilakukan user
-          count(order_id) as total_orders,
+        -- Jeda hari dari order terakhir yang tercatat
+        max(days_gap) as days_since_last_order
+    from base
+    group by user_id
+)
 
-          -- Order terakhir (urutan ke berapa yang paling akhir)
-          max(order_number) as max_order_number,
-
-          -- Rata-rata jeda antar order (hanya dihitung jika tidak NULL)
-          avg(days_since_prior_order) as avg_days_between_orders
-
-      from orders
-      group by user_id
-
-  )
-
-  -- Final result: satu baris per user
-  select * from aggregated
+select * from agg
   );
   

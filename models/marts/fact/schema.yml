@@ -1,67 +1,55 @@
 version: 2
 
 models:
-  - name: fact_order_items
-    description: >
-      Tabel fakta granular yang merepresentasikan setiap item produk dalam order.
-      Setiap baris mewakili satu produk yang dibeli dalam satu order oleh user,
-      serta direferensikan ke dimensi user, product, order, dan time.
+- name: fact_order_items
+  description: >
+    Tabel fakta granular transaksi, dibentuk dari join antar dimensi 
+    (dim_order, dim_product, dim_time, dan dim_user secara tidak langsung melalui dim_order).
 
-    columns:
-      - name: user_id
-        description: "Foreign key ke dim_user. Mengidentifikasi siapa yang melakukan order."
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_user')
-              field: user_id
+  columns:
+    - name: user_id
+      description: "ID user yang melakukan order (diturunkan dari dim_order)"
+      tests:
+        - not_null
 
-      - name: order_id
-        description: "Foreign key ke dim_order. Merepresentasikan order utama."
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_order')
-              field: order_id
+    - name: order_id
+      description: "ID unik order, foreign key ke dim_order"
+      tests:
+        - not_null
+        - relationships:
+            to: ref('dim_order')
+            field: order_id
 
-      - name: product_id
-        description: "Foreign key ke dim_product. Menunjukkan produk yang dibeli dalam order."
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_product')
-              field: product_id
+    - name: product_id
+      description: "Produk dalam order, foreign key ke dim_product"
+      tests:
+        - not_null
+        - relationships:
+            to: ref('dim_product')
+            field: product_id
 
-      - name: time_id
-        description: >
-          Foreign key ke dim_time. Menggabungkan informasi waktu berdasarkan hari dan jam order.
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_time')
-              field: time_id
+    - name: time_id
+      description: "Waktu order, foreign key ke dim_time (optional)"
+      tests:
+        - relationships:
+            to: ref('dim_time')
+            field: time_id
 
-      - name: order_number
-        description: >
-          Urutan keberapa user tersebut melakukan order (dalam sejarah belanjanya).
-        tests:
-          - not_null
+    - name: order_number
+      description: "Urutan order keberapa oleh user tersebut"
+      tests:
+        - not_null
 
-      - name: days_since_prior_order
-        description: >
-          Jumlah hari sejak order sebelumnya dari user yang sama.
-          NULL berarti ini adalah order pertama.
+    - name: days_gap
+      description: "Jeda (dalam hari) dari order sebelumnya. NULL jika order pertama."
+      tests: []
 
-      - name: add_to_cart_order
-        description: >
-          Urutan produk ini dimasukkan ke dalam keranjang pada saat checkout.
-        tests:
-          - not_null
+    - name: add_to_cart_order
+      description: "Urutan produk dimasukkan ke dalam keranjang saat order"
+      tests: []
 
-      - name: reordered
-        description: >
-          Apakah produk ini merupakan pembelian ulang (1 = iya, 0 = tidak).
-        tests:
-          - not_null
-          - accepted_values:
-              values: [0, 1]
+    - name: reordered
+      description: "Apakah produk dibeli ulang (1 = ya, 0 = tidak)"
+      tests:
+        - accepted_values:
+            values: [0, 1]

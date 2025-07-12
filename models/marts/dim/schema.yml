@@ -53,80 +53,75 @@ models:
 
   - name: dim_user
     description: >
-      Dimensi pengguna yang menyimpan informasi agregasi perilaku belanja dari tabel orders.
-      Berisi total order, order terakhir, dan rata-rata jeda antar order.
+      Dimensi pelanggan yang menyimpan metrik ringkasan perilaku belanja:
+      jumlah order, jeda antar order, dan informasi order terakhir.
 
     columns:
       - name: user_id
-        description: "ID unik pengguna (primary key)"
+        description: "ID unik pelanggan"
         tests: [not_null, unique]
 
       - name: total_orders
-        description: "Jumlah total order yang dilakukan user"
-        tests: [not_null]
-
-      - name: max_order_number
-        description: "Order terakhir (nomor order terbesar) dari user"
+        description: "Total jumlah order yang dilakukan oleh user"
         tests: [not_null]
 
       - name: avg_days_between_orders
-        description: >
-          Rata-rata selisih hari antar order untuk user. Nilai NULL tidak ikut dihitung dalam rata-rata.
+        description: "Rata-rata jeda hari antar order"
+        tests: []
+
+      - name: last_order_number
+        description: "Nomor urut order terakhir"
+        tests: []
+
+      - name: days_since_last_order
+        description: "Jumlah hari sejak order terakhir (diambil dari kolom days_gap)"
+        tests: []
 
   - name: dim_order
     description: >
-      Dimensi order yang menyimpan informasi waktu, user, dan urutan order.
-      Berfungsi sebagai referensi untuk fakta order item.
+      Dimensi order yang menyimpan informasi urutan pembelian oleh user,
+      termasuk hari, jam, dan jeda antar order.
 
     columns:
       - name: order_id
-        description: "ID unik untuk setiap order"
+        description: "Primary key dari order (unik per transaksi)"
         tests: [not_null, unique]
 
       - name: user_id
-        description: "ID pengguna yang melakukan order"
+        description: "User yang melakukan order"
         tests: [not_null]
 
       - name: order_number
-        description: "Urutan order ke berapa oleh user tersebut"
+        description: "Urutan keberapa order dilakukan oleh user"
         tests: [not_null]
 
-      - name: order_day_of_week
-        description: "Hari order dilakukan (0 = Minggu, 6 = Sabtu)"
+      - name: order_day
+        description: "Hari dalam minggu saat order dilakukan (Sunday–Saturday)"
         tests: [not_null]
-
-      - name: order_hour
-        description: "Jam dalam sehari saat order dilakukan (0-23)"
-        tests: [not_null]
-
-      - name: days_since_prior_order
-        description: >
-          Selisih hari dari order sebelumnya (NULL jika ini order pertama)
-
-  - name: dim_time
-    description: >
-      Dimensi waktu berdasarkan kombinasi hari (dow) dan jam (hour) dari data order.
-      Menyediakan informasi nama hari dan waktu terformat, serta time_id sebagai surrogate key.
-
-    columns:
-      - name: time_id
-        description: "Surrogate key unik berdasarkan order_day_of_week dan order_hour"
-        tests:
-          - not_null
-          - unique
-
-      - name: order_day_of_week
-        description: "Angka hari dalam seminggu (0 = Minggu, 6 = Sabtu)"
-        tests:
-          - not_null
-
-      - name: day_name
-        description: "Nama hari berdasarkan angka hari (Senin–Minggu)"
 
       - name: order_hour
         description: "Jam saat order dilakukan (0–23)"
-        tests:
-          - not_null
+        tests: [not_null]
 
-      - name: time_hour
-        description: "Jam order dalam format HH:00, digunakan untuk visualisasi waktu"
+      - name: order_days_gap
+        description: >
+          Jeda hari sejak order sebelumnya. NULL jika ini adalah order pertama user.
+        tests: []
+
+  - name: dim_time
+    description: >
+      Dimensi waktu berdasarkan kombinasi hari dalam minggu dan jam order.
+      Digunakan untuk analisis perilaku pelanggan berdasarkan waktu.
+
+    columns:
+      - name: time_id
+        description: "Surrogate key unik untuk kombinasi day_of_week dan hour_of_day"
+        tests: [not_null, unique]
+
+      - name: day_of_week
+        description: "Hari dalam minggu saat order dilakukan (Sunday–Saturday)"
+        tests: [not_null]
+
+      - name: hour_of_day
+        description: "Jam dalam hari saat order dilakukan (0–23)"
+        tests: [not_null]

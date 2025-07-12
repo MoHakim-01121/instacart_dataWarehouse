@@ -11,65 +11,84 @@
     -- models/marts/fact/fact_order_items.sql
 
 -- Tujuan:
--- Fakta granular, 1 baris per item produk dalam order.
--- Mereferensikan dimensi: user, order, product, time.
+-- Fakta granular per item produk dalam order.
+-- Dibentuk dari dimensi yang sudah dibersihkan: dim_order, dim_product, dim_time.
 
-with orders as (
-    select * 
-    from "instacart_db"."public"."stg_orders"
+with order_products as (
+
+    -- Masih dari stg karena belum ada dim_order_products
+    select
+        order_id,
+        product_id,
+        add_to_cart_order,
+        reordered
+    from "instacart_db"."public"."stg_order_products"
+
 ),
 
-order_products as (
-    select * 
-    from "instacart_db"."public"."stg_order_products"
+dim_order as (
+    select
+        order_id,
+        user_id,
+        order_number,
+        order_day,
+        order_hour,
+        order_days_gap
+    from "instacart_db"."public"."dim_order"
+),
+
+dim_product as (
+    select
+        product_id
+    from "instacart_db"."public"."dim_product"
 ),
 
 dim_time as (
     select
         time_id,
-        order_day_of_week,
-        order_hour
+        day_of_week,
+        hour_of_day
     from "instacart_db"."public"."dim_time"
 ),
 
--- Gabungkan order dengan item dan waktu
 joined as (
+
     select
-        -- Foreign Key ke dim_user
+        -- FK ke dim_user (via dim_order)
         o.user_id,
 
-        -- Foreign Key ke dim_order
+        -- FK ke dim_order
         o.order_id,
         o.order_number,
-        o.days_since_prior_order,
+        o.order_days_gap,
 
-        -- Foreign Key ke dim_product
+        -- FK ke dim_product
         op.product_id,
         op.add_to_cart_order,
         op.reordered,
 
-        -- Foreign Key ke dim_time
+        -- FK ke dim_time
         t.time_id
 
-    from orders o
-    join order_products op 
+    from order_products op
+    inner join dim_order o
         on o.order_id = op.order_id
 
-    -- Join waktu berdasarkan kombinasi hari dan jam order
+    inner join dim_product p
+        on p.product_id = op.product_id
+
     left join dim_time t
-        on o.order_day_of_week = t.order_day_of_week
-       and o.order_hour = t.order_hour
+        on o.order_day = t.day_of_week
+       and o.order_hour = t.hour_of_day
 )
 
--- Output akhir: fakta penjualan item per order
 select
-    user_id,                -- FK ke dim_user
-    order_id,               -- FK ke dim_order
-    product_id,             -- FK ke dim_product
-    time_id,                -- FK ke dim_time
-
+    user_id,               -- FK ke dim_user
+    order_id,              -- FK ke dim_order
+    product_id,            -- FK ke dim_product
+    time_id,               -- FK ke dim_time
     order_number,
-    days_since_prior_order,
+    order_days_gap,
     add_to_cart_order,
     reordered
 from joined

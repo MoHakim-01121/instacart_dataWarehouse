@@ -18,7 +18,7 @@ Tahapan awal sebelum transformasi:
 - Identifikasi anomali seperti nilai 'missing', data kosong, atau referensi FK yang tidak valid
 - Memastikan tipe data sesuai (misal angka vs string)
 
-![High level diagram](../instacart_dataWarehouse/image/image3.png)
+![High level diagram](../instacart_dataWarehouse/image/imagerev.png)
 
 ##  Transformasi per Model
 
@@ -48,12 +48,13 @@ Tahapan awal sebelum transformasi:
 
 | Model dbt         | Transformasi                                                                           |
 |-------------------|----------------------------------------------------------------------------------------|
-| `dim_user.sql`    | - Agregasi `total_orders`, `max_order_number`, `avg_days_between_orders` per `user_id` |
+| `dim_user.sql`    | - Agregasi `total_orders`, `avg_days_between_orders`, `last_order_number`, `days_since_last_order` per `user_id` |
+|                   | - Menggunakan `days_gap` dari stg_orders untuk kalkulasi jeda antar order            |
 | `dim_product.sql` | - Join ke `aisle` & `department` via FK (snowflake)                                   |
 |                  | - Ambil `product_name`, `aisle_id`, `department_id`                                    |
 | `dim_aisle.sql`   | - Ambil dari `stg_aisles` tanpa modifikasi tambahan                                   |
 | `dim_department.sql`| - Ambil dari `stg_departments`                                                      |
-| `dim_order.sql`   | - Ambil dari `stg_orders`, simpan info seperti `order_number`, `order_hour`, dll      |
+| `dim_order.sql`   | - Ambil dari `stg_orders`, simpan info seperti `order_number`, `order_hour`, `order_days_gap`      |
 | `dim_time.sql`    | - Turunan dari `order_hour`, `order_day_of_week` untuk mapping `time_id`, `day_name`, `time_hour` |
 
 
@@ -63,11 +64,11 @@ Tahapan awal sebelum transformasi:
 | Model dbt              | Transformasi                                                                 |
 |------------------------|------------------------------------------------------------------------------|
 | `fact_order_items.sql` | - Join dari `stg_order_products` ke:                                         |
-|                        |   - `dim_order` → ambil `order_number`, `days_since_prior_order`             |
-|                        |   - `dim_user` → via `user_id`                                               |
+|                        |   - `dim_order` → ambil `order_number`, `order_days_gap`, `user_id`         |
 |                        |   - `dim_product` → via `product_id`                                         |
-|                        |   - `dim_time` → via `order_hour`, `order_day_of_week`                       |
+|                        |   - `dim_time` → via `order_day` dan `order_hour` (left join)               |
 |                        | - Simpan fakta granular: `add_to_cart_order`, `reordered`                    |
+|                        | - Struktur final: `user_id`, `order_id`, `product_id`, `time_id`, `order_number`, `order_days_gap`, `add_to_cart_order`, `reordered` |
 
 
 
@@ -81,5 +82,20 @@ Tahapan awal sebelum transformasi:
 | **Agregasi**       | dim_user                   | Agregasi metrik dari stg_orders           |
 | **Join**           | fact_order_items           | Gabungkan semua dimensi ke tabel fakta    |
 | **Mapping/Metrik** | dim_time                   | Mapping jam & hari jadi dimensi eksplisit |
+
+
+
+##  Struktur Data Mart
+
+### Dimensi Tables
+- **dim_user**: Metrik perilaku pelanggan (total_orders, avg_days_between_orders, last_order_number, days_since_last_order)
+- **dim_order**: Informasi order (order_id, user_id, order_number, order_day, order_hour, order_days_gap)
+- **dim_product**: Produk dengan referensi ke aisle dan department
+- **dim_aisle**: Kategori rak produk
+- **dim_department**: Kategori department produk
+- **dim_time**: Dimensi waktu berdasarkan kombinasi hari dan jam
+
+### Fakta Table
+- **fact_order_items**: Tabel fakta granular dengan semua foreign key ke dimensi dan metrik transaksi (add_to_cart_order, reordered)
 
 
