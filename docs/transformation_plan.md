@@ -17,6 +17,7 @@ Langkah awal sebelum transformasi:
 - Identifikasi anomali seperti nilai 'missing', referensi FK yang tidak valid
 - Memastikan tipe data sudah sesuai
 
+## HLD
 ![High level diagram](https://raw.githubusercontent.com/MoHakim-01121/instacart_dataWarehouse/main/image/imagerev.png)
 
 ## Transformasi per Model
