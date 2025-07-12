@@ -103,7 +103,7 @@ Membangun sistem data warehouse yang:
 
 ## 📊 Star Schema
 
-![Star Schema](image/image1.png)
+![Star Schema](image/image4.png)
 
 Fakta utama:
 - `fact_order_items` (1 baris per produk dalam 1 order)
