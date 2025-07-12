@@ -26,7 +26,9 @@ Tahapan awal sebelum transformasi:
 
 | Model dbt              | Transformasi                                                                 |
 |------------------------|------------------------------------------------------------------------------|
-| `stg_orders.sql`       | - Rename kolom (`order_hour_of_day → order_hour`)                            |
+| `stg_orders.sql`       | - Rename kolom (`order_hour_of_day → order_hour`)
+|                          - Rename kolom (` order_hour_of_day → order_hour`)
+                           - Rename kolom (`days_since_prior_order → order_days_gap`)
 |                        | - Cast tipe data ke integer                                                  |
 |                        | - NULL handling kolom `days_since_prior_order` (tetap NULL jika order pertama)     |
 | `stg_products.sql`     | - Trim spasi, lowercase dan Null handling kolom `product_name`                                   |
