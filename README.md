@@ -1,10 +1,10 @@
-# 📦 Instacart Data Warehouse 
+# Instacart Data Warehouse 
 
 Proyek ini membangun **Data Warehouse** dari [dataset **Instacart**](https://www.kaggle.com/datasets/psparks/instacart-market-basket-analysis) menggunakan **dbt (Data Build Tool)** dan **PostgreSQL**. Proyek mencakup proses **ETL/ELT** lengkap: mulai dari pemuatan data mentah, pembersihan, transformasi, pembuatan tabel dimensi & fakta (star schema), hingga testing dan dokumentasi.
 
 
 
-## 🧱 Teknologi & Tools
+## Teknologi & Tools
 
 - **dbt (data build tool)** untuk transformasi data
 - **PostgreSQL** sebagai data warehouse
@@ -14,7 +14,7 @@ Proyek ini membangun **Data Warehouse** dari [dataset **Instacart**](https://www
 
 
 
-## 📂 Struktur Proyek
+## Struktur Proyek
 
 ```
 instacart_dataWarehouse/
@@ -32,7 +32,7 @@ instacart_dataWarehouse/
 
 
 
-## 📈 Tujuan Proyek
+## Tujuan Proyek
 
 Membangun sistem data warehouse yang:
 - Menyediakan **struktur data analitik** yang bersih, tervalidasi, dan mudah digunakan
@@ -45,7 +45,7 @@ Membangun sistem data warehouse yang:
 
 
 ---
-## 🧭 Roadmap Tahapan Proyek
+## Roadmap Tahapan Proyek
 
 | Tahap | Nama Tahap                      | Tujuan                                                                 |
 |-------|----------------------------------|------------------------------------------------------------------------|
@@ -58,7 +58,7 @@ Membangun sistem data warehouse yang:
 | 7     | **Deployment & Automasi** (Opsional) | Deploy lokal, atau automasi via scheduler/db
 ---
 
-## 🧭 Tahapan Proyek
+## Tahapan Proyek
 
 ### Tahap 1: Analisis & Perancangan
 - Memahami struktur data mentah Instacart
@@ -127,7 +127,7 @@ Dimensi:
 
 ---
 
-## 🚀 Cara Menjalankan
+## Cara Menjalankan
 
 ```bash
 conda activate dbtetl
