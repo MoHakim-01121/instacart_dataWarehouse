@@ -3,5 +3,3 @@ target/
 dbt_packages/
 logs/
 dbt_internal_packages/
-git add .gitignore
-git commit -m "Add .gitignore to ignore large data files"
